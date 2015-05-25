@@ -21,7 +21,7 @@ public class AboutExceptions {
 		} catch(IOException e) { 
 			s = "exception thrown";
 		}
-		assertEquals(s, __);
+		assertEquals(s, "exception thrown");
 	}
 	
 	@Koan
@@ -35,7 +35,10 @@ public class AboutExceptions {
 		} finally {
 			s += " and finally ran as well";
 		}
-		assertEquals(s, __);
+		// NOTE: Confusing why "code ran normally" is not appended first
+		// 		 during the try block, maybe when the catch block is 
+		//  	 evaluated, the s variable is re-instantiated?
+		assertEquals(s, "exception thrown and finally ran as well");
 	}
 	
 	@Koan
@@ -46,7 +49,7 @@ public class AboutExceptions {
 		} finally {
 			s += " and finally ran as well";
 		}
-		assertEquals(s, __);
+		assertEquals(s, "code ran normally and finally ran as well");
 	}
 	
 	private void tryCatchFinallyWithVoidReturn(StringBuilder whatHappened) {
@@ -65,7 +68,7 @@ public class AboutExceptions {
 	public void finallyIsAlwaysRan() {
 		StringBuilder whatHappened = new StringBuilder();
 		tryCatchFinallyWithVoidReturn(whatHappened);
-		assertEquals(whatHappened.toString(), __);
+		assertEquals(whatHappened.toString(), "did something dangerous; the catch block executed, but so did the finally!");
 	}
 	
 	@SuppressWarnings("finally") // this is suppressed because returning in finally block is obviously a compiler warning
@@ -89,8 +92,9 @@ public class AboutExceptions {
 	public void returnInFinallyBlock() {
 		StringBuilder whatHappened = new StringBuilder();
 		// Which value will be returned here?
-		assertEquals(returnStatementsEverywhere(whatHappened), __);
-		assertEquals(whatHappened.toString(), __);
+		// ANSWER: The string value returned on the finally block
+		assertEquals(returnStatementsEverywhere(whatHappened), "from finally");
+		assertEquals(whatHappened.toString(), "try, catch, finally");
 	}
 	
 	private void doUncheckedStuff() {
@@ -100,7 +104,12 @@ public class AboutExceptions {
 	@Koan
 	public void catchUncheckedExceptions() {
 		// What do you need to do to catch the unchecked exception?
-		doUncheckedStuff();
+		// ANSWER: try-catch block
+		try {
+			doUncheckedStuff();
+		} catch(RuntimeException e) {
+			// Do something laters
+		}
 	}
 	
 	@SuppressWarnings("serial")
@@ -122,6 +131,7 @@ public class AboutExceptions {
 		} catch(ParentException e) {
 			s = "ParentException";
 		}
-		assertEquals(s, __);
+		assertEquals(s, "ChildException");
+		// NOTE: Child exception is displayed because it is what is thrown inside the method.
 	}	
 }
